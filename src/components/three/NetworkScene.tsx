@@ -410,7 +410,11 @@ export default function NetworkScene({ nodeCount, packetCount, dustCount, still 
 
     /* Fade the lattice as it calms/converges; the CTA node takes over. */
     materials.edge.opacity = 0.16 * (1 - s.calm * 0.35) * (1 - converge);
-    materials.packet.uniforms.uOpacity.value = 1 - converge;
+    // While calm (About, where the portrait is the focus) the network steps
+    // back to an ambient layer; converging (Contact) brings the node back up.
+    const ambient = 1 - s.calm * 0.55 * (1 - converge);
+    materials.packet.uniforms.uOpacity.value = (1 - converge) * ambient;
+    materials.node.uniforms.uOpacity.value = ambient;
 
     if (dustRef.current) dustRef.current.rotation.y = time * 0.01;
   });

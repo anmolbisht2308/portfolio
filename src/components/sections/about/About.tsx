@@ -4,6 +4,8 @@ import { useRef } from "react";
 import { about } from "@/content/content";
 import { gsap, PLAY_ONCE, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { sceneState } from "@/components/three/scene-store";
+import Portrait from "./Portrait";
+import type { PortraitState } from "./PortraitCanvas";
 
 /**
  * About: a short, human intro. Each sentence "streams" from dim to lit as
@@ -13,10 +15,14 @@ import { sceneState } from "@/components/three/scene-store";
  * scrubbed timeline drives both the text and `sceneState.calm`.
  * Mobile: no pin; each line lights as it crosses the viewport and the
  * network calms across the section. Reduced motion: everything lit, static.
+ *
+ * The same timeline assembles the 3D point-cloud portrait (progress 0 → 1).
  */
 export default function About() {
   const root = useRef<HTMLElement>(null);
   const inner = useRef<HTMLDivElement>(null);
+  // Written by the timeline, read by the WebGL portrait every frame.
+  const portrait = useRef<PortraitState>({ progress: 0, hover: false });
 
   useGSAP(
     () => {
@@ -61,10 +67,13 @@ export default function About() {
             });
             lines.forEach((line, i) => tl.to(line, { opacity: 1, duration: 1 }, i * 0.9));
             tl.to("[data-about-meta]", { opacity: 1, y: 0, duration: 1 }, lines.length * 0.9 - 0.5);
-            // Network settles over the whole pin.
+            // Network settles over the whole pin; the portrait assembles in
+            // the first half so it's complete while the lines are still lighting.
             tl.to(sceneState, { calm: 1, duration: tl.duration() }, 0);
+            tl.to(portrait.current, { progress: 1, duration: tl.duration() * 0.55 }, 0);
             return () => {
               sceneState.calm = 0;
+              portrait.current.progress = 0;
             };
           }
 
@@ -86,8 +95,14 @@ export default function About() {
             ease: "none",
             scrollTrigger: { trigger: root.current, start: "top bottom", end: "center center", scrub: true },
           });
+          gsap.to(portrait.current, {
+            progress: 1,
+            ease: "none",
+            scrollTrigger: { trigger: "[data-portrait]", start: "top 95%", end: "center 55%", scrub: true },
+          });
           return () => {
             sceneState.calm = 0;
+            portrait.current.progress = 0;
           };
         },
       );
@@ -97,34 +112,42 @@ export default function About() {
 
   return (
     <section ref={root} id="about" data-scene="about" aria-labelledby="about-title" className="relative z-10">
-      <div ref={inner} className="container-x flex min-h-svh flex-col justify-center py-24 lg:py-0">
-        <p className="text-mono-label mb-8 flex items-center gap-3 text-lo">
-          <span className="live-dot size-1.5!" aria-hidden="true" />
-          <span id="about-title">{about.kicker}</span>
-        </p>
-
-        <div className="max-w-[26ch] space-y-3 font-display text-[clamp(1.75rem,1.1rem+2.6vw,3.5rem)] leading-[1.08] font-semibold tracking-[-0.03em] text-hi sm:max-w-[30ch] lg:max-w-[34ch]">
-          {about.lines.map((line) => (
-            <p key={line} data-line>
-              {line}
-            </p>
-          ))}
+      <div
+        ref={inner}
+        className="container-x grid min-h-svh content-center gap-12 py-24 lg:grid-cols-12 lg:items-center lg:gap-8 lg:py-0"
+      >
+        <div data-portrait className="lg:order-2 lg:col-span-5">
+          <Portrait stateRef={portrait} />
         </div>
+        <div className="lg:order-1 lg:col-span-7">
+          <p className="text-mono-label mb-8 flex items-center gap-3 text-lo">
+            <span className="live-dot size-1.5!" aria-hidden="true" />
+            <span id="about-title">{about.kicker}</span>
+          </p>
 
-        <dl data-about-meta className="text-mono-data mt-14 grid max-w-3xl gap-x-10 gap-y-4 text-lo sm:grid-cols-3">
-          <div>
-            <dt className="text-mono-label">Location</dt>
-            <dd className="mt-1 text-md">{about.location}</dd>
+          <div className="max-w-[26ch] space-y-3 font-display text-[clamp(1.75rem,1.1rem+2.2vw,3rem)] leading-[1.08] font-semibold tracking-[-0.03em] text-hi sm:max-w-[30ch]">
+            {about.lines.map((line) => (
+              <p key={line} data-line>
+                {line}
+              </p>
+            ))}
           </div>
-          <div>
-            <dt className="text-mono-label">Education</dt>
-            <dd className="mt-1 text-md">{about.education.degree}</dd>
-          </div>
-          <div>
-            <dt className="text-mono-label">{about.education.years}</dt>
-            <dd className="mt-1 text-md">{about.education.school}</dd>
-          </div>
-        </dl>
+
+          <dl data-about-meta className="text-mono-data mt-14 grid max-w-3xl gap-x-10 gap-y-4 text-lo sm:grid-cols-3">
+            <div>
+              <dt className="text-mono-label">Location</dt>
+              <dd className="mt-1 text-md">{about.location}</dd>
+            </div>
+            <div>
+              <dt className="text-mono-label">Education</dt>
+              <dd className="mt-1 text-md">{about.education.degree}</dd>
+            </div>
+            <div>
+              <dt className="text-mono-label">{about.education.years}</dt>
+              <dd className="mt-1 text-md">{about.education.school}</dd>
+            </div>
+          </dl>
+        </div>
       </div>
     </section>
   );

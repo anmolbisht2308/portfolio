@@ -32,6 +32,7 @@ const jsonLd = {
   "@type": "Person",
   name: site.name,
   jobTitle: site.shortTitle,
+  image: `${site.url}/anmol.jpg`,
   worksFor: { "@type": "Organization", name: "Infiheal" },
   email: `mailto:${site.email}`,
   url: site.url,

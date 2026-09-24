@@ -7,7 +7,7 @@ Built with Next.js (App Router) · TypeScript (strict) · Tailwind CSS v4 · Rea
 ## Sections
 
 1. **Hero:** a live 3D network where packets hop between nodes like WebSocket messages, reacting to the cursor and to scroll (camera dolly). Masked word-by-word headline and a telemetry readout.
-2. **About:** pinned; sentences light up line by line while the network settles into a calm ring.
+2. **About:** pinned; sentences light up line by line while the network settles into a calm ring, and a **3D point-cloud portrait** assembles from packets streaming in off an orbit ring. It tilts toward the cursor and ripples like a hologram on hover.
 3. **Healo:** pinned case study. A token-streaming chat demo (stop/regenerate) drives packets through an SVG architecture diagram; five scroll chapters; collaborators; count-up impact stats. On mobile the chapters become a swipe carousel.
 4. **Stack:** the skills as a system map. Hover or focus a skill to light its wires to the products it powers; on mobile, grouped chips that expand to show where each skill is used.
 5. **Log:** experience as a packet trace. Each role arrives as a message, and the Infiheal roles form a promotion path.
@@ -45,6 +45,19 @@ Set `NEXT_PUBLIC_SITE_URL` once you have a custom domain (used for canonical URL
 - `work[].image`: screenshots for the Other Work section
 
 The Healo architecture diagram's node labels (`healo.arch`) and the scroll chapters (`healo.steps`) are also in `content.ts`, so you can correct any detail of the system description there. Chat-demo replies (`healo.chat`) are illustrative and labelled as such on the page.
+
+## Portrait assets
+
+The 3D portrait is rendered from two small textures in `public/portrait/`: `color.webp` (the photo) and `depth.png` (a relief map whose black areas are background). To swap the photo:
+
+```bash
+pip install pillow numpy scipy
+python3 scripts/portrait-mask.py path/to/photo.jpg /tmp/mask.png      # keys out a solid/gradient background
+python3 scripts/portrait-depth.py /tmp/mask.png public/portrait/depth.png
+# then export the photo at 512×512 to public/portrait/color.webp and 800×800 to public/anmol.{jpg,webp}
+```
+
+The depth map is a hand-tuned relief (inflated silhouette + head ellipsoid + facial features). If you move the face in a new photo, adjust the face-centre constants in `portrait-depth.py`. `public/anmol.jpg` is also used in the Open Graph image and the JSON-LD Person schema.
 
 ## Structure
 

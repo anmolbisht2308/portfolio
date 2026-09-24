@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { ImageResponse } from "next/og";
 import { site } from "@/content/content";
 
@@ -39,7 +41,8 @@ const EDGES: [number, number][] = [
   [8, 9],
 ];
 
-export default function OpengraphImage() {
+export default async function OpengraphImage() {
+  const photo = `data:image/jpeg;base64,${(await readFile(join(process.cwd(), "public/anmol.jpg"))).toString("base64")}`;
   return new ImageResponse(
     <div
       style={{
@@ -88,6 +91,23 @@ export default function OpengraphImage() {
           }}
         />
       ))}
+      {/* The portrait sits in the network as its central node. */}
+      <div
+        style={{
+          position: "absolute",
+          left: 930 - 150,
+          top: 300 - 150,
+          width: 300,
+          height: 300,
+          borderRadius: 999,
+          border: "3px solid #ff9b6a",
+          boxShadow: "0 0 60px rgba(255,155,106,0.45)",
+          display: "flex",
+          overflow: "hidden",
+        }}
+      >
+        <img src={photo} width={300} height={300} alt="" style={{ objectFit: "cover" }} />
+      </div>
       <div style={{ display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: 72, width: 720 }}>
         <div
           style={{ display: "flex", alignItems: "center", gap: 12, fontSize: 22, color: "#a6accb", letterSpacing: 2 }}
