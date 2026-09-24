@@ -1,0 +1,400 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Design tokens — "Real-time, human"
+   Every colour/type/motion value on the site comes from here.
+   ───────────────────────────────────────────────────────────────────────── */
+@theme {
+  /* Surfaces: near-black with an indigo undertone */
+  --color-void: #07080f;
+  --color-base: #0b0d1a;
+  --color-surface: #11142a;
+  --color-raised: #181c38;
+  --color-line: #232850;
+
+  /* Text */
+  --color-hi: #eceef8;
+  --color-md: #a6accb;
+  --color-lo: #7a80a3;
+
+  /* Accents: one warm (human / signal / CTA), one cool (data / connection) */
+  --color-ember: #ff9b6a;
+  --color-ember-soft: #ffb68f;
+  --color-signal: #7c9cff;
+  --color-signal-core: #c3d0ff;
+
+  /* Families (CSS variables provided by next/font in layout.tsx) */
+  --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-instrument), ui-serif, Georgia, serif;
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+
+  /* Motion: physical easing, never linear */
+  --ease-signal: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-transit: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-ack: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-depart: cubic-bezier(0.7, 0, 0.84, 0);
+
+  --breakpoint-xs: 25rem;
+  --breakpoint-3xl: 112rem;
+}
+
+:root {
+  --dur-instant: 120ms;
+  --dur-fast: 240ms;
+  --dur-base: 480ms;
+  --dur-slow: 800ms;
+  --dur-reveal: 1100ms;
+
+  --gutter: clamp(16px, 4vw, 48px);
+  --section-y: clamp(6rem, 12vw, 12rem);
+  --nav-h: 4.5rem;
+
+  color-scheme: dark;
+}
+
+/* ── Type scale ─────────────────────────────────────────────────────────── */
+@utility text-display-xl {
+  font-family: var(--font-display);
+  font-size: clamp(3.25rem, 1.4rem + 7.6vw, 10rem);
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  font-weight: 600;
+}
+@utility text-display-l {
+  font-family: var(--font-display);
+  font-size: clamp(2.75rem, 1.5rem + 5vw, 6.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+  font-weight: 600;
+}
+@utility text-h2 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 1.3rem + 3vw, 4rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-weight: 600;
+}
+@utility text-h3 {
+  font-family: var(--font-display);
+  font-size: clamp(1.375rem, 1.15rem + 1vw, 2.125rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+}
+@utility text-lead {
+  font-size: clamp(1.125rem, 1rem + 0.6vw, 1.5rem);
+  line-height: 1.45;
+}
+@utility text-body {
+  font-size: 1.0625rem;
+  line-height: 1.6;
+}
+@utility text-mono-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+@utility text-mono-data {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums;
+}
+/* Human-voice accent inside display headings */
+@utility human {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+@utility container-x {
+  width: 100%;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* ── Base ───────────────────────────────────────────────────────────────── */
+@layer base {
+  html {
+    background: var(--color-void);
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    scrollbar-color: var(--color-line) var(--color-void);
+  }
+  body {
+    background: var(--color-base);
+    color: var(--color-md);
+    font-family: var(--font-sans);
+    overflow-x: clip;
+    min-height: 100svh;
+  }
+  ::selection {
+    background: color-mix(in oklab, var(--color-ember) 35%, transparent);
+    color: var(--color-hi);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-ember-soft);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  /* Anchor targets clear the fixed nav */
+  [id] {
+    scroll-margin-top: var(--nav-h);
+  }
+}
+
+/* Lenis (smooth scroll) recommended styles */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis:not(.lenis-autoToggle).lenis-stopped {
+  overflow: clip;
+}
+.lenis [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+/* Custom cursor: only hide the native pointer once ours is mounted */
+html.has-cursor,
+html.has-cursor * {
+  cursor: none !important;
+}
+
+/* ── Intro sequence (pure CSS so it never blocks LCP on JS) ─────────────
+   The head script sets data-intro="skip" for returning visitors and
+   reduced-motion users; clicking/pressing any key also skips.          */
+:root {
+  --intro-delay: 1150ms;
+}
+html[data-intro="skip"] {
+  --intro-delay: 0ms;
+}
+
+/* Masked word reveal: .reveal-word > span
+   No backwards fill: during the delay each word sits painted in place under
+   the opaque preloader (so LCP registers at first paint), then the reveal
+   starts from below the mask as the preloader lifts. */
+.reveal-word {
+  display: inline-block;
+  overflow: clip;
+  overflow-clip-margin: 0.12em;
+  vertical-align: top;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+.reveal-word > span {
+  display: inline-block;
+  animation: word-in var(--dur-reveal) var(--ease-signal);
+  animation-delay: calc(var(--intro-delay) + var(--i, 0) * 60ms);
+}
+@keyframes word-in {
+  from {
+    transform: translateY(105%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.fade-up {
+  opacity: 0;
+  transform: translateY(14px);
+  animation: fade-up var(--dur-slow) var(--ease-signal) forwards;
+  animation-delay: calc(var(--intro-delay) + var(--d, 0ms));
+}
+@keyframes fade-up {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Live dot: the "ack" pulse */
+.live-dot {
+  position: relative;
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--color-ember);
+}
+.live-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: inherit;
+  animation: ack-ring 2.2s var(--ease-signal) infinite;
+}
+@keyframes ack-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  70%,
+  100% {
+    transform: scale(3);
+    opacity: 0;
+  }
+}
+
+/* Streaming caret */
+.caret::after {
+  content: "";
+  display: inline-block;
+  width: 0.5em;
+  height: 1.05em;
+  margin-left: 2px;
+  vertical-align: -0.18em;
+  background: var(--color-ember);
+  border-radius: 1px;
+  animation: caret 1s steps(2, jump-none) infinite;
+}
+@keyframes caret {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Typing indicator */
+.typing span {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--color-lo);
+  animation: typing 1s var(--ease-transit) infinite;
+}
+.typing span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.typing span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+@keyframes typing {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+
+/* Scroll cue: a packet dropping down a wire */
+.cue-wire {
+  position: relative;
+  width: 1px;
+  height: 3rem;
+  background: linear-gradient(var(--color-line), transparent);
+  overflow: hidden;
+}
+.cue-wire::after {
+  content: "";
+  position: absolute;
+  left: -1.5px;
+  top: -8px;
+  width: 4px;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--color-signal-core);
+  box-shadow: 0 0 10px var(--color-signal);
+  animation: cue 2.4s var(--ease-transit) infinite;
+}
+@keyframes cue {
+  to {
+    transform: translateY(3.5rem);
+  }
+}
+
+/* Film grain: static texture, shifted in steps (compositor-only). */
+.grain {
+  position: fixed;
+  inset: -50%;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.07;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  animation: grain 0.9s steps(6) infinite;
+}
+@keyframes grain {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(-4%, 3%); }
+  40% { transform: translate(3%, -5%); }
+  60% { transform: translate(-6%, -2%); }
+  80% { transform: translate(5%, 4%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* Preloader */
+.preloader {
+  animation: preloader-out 600ms var(--ease-depart) forwards;
+  animation-delay: calc(var(--intro-delay) - 350ms);
+}
+html[data-intro="skip"] .preloader {
+  display: none;
+}
+@keyframes preloader-out {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+.handshake-line {
+  transform-origin: left;
+  transform: scaleX(0);
+  animation: handshake 700ms var(--ease-transit) 120ms forwards;
+}
+@keyframes handshake {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Surfaces (a utility, so responsive overrides like lg:bg-none win) */
+@utility surface {
+  background-image: linear-gradient(180deg, color-mix(in oklab, var(--color-surface) 92%, white 3%), var(--color-surface));
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  box-shadow: inset 0 1px 0 0 rgb(255 255 255 / 0.04);
+}
+
+/* ── Reduced motion: keep content, drop the choreography ────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --intro-delay: 0ms;
+  }
+  .reveal-word > span,
+  .fade-up {
+    transform: none;
+    animation: fade-in 200ms linear forwards;
+    animation-delay: 0ms;
+  }
+  .grain,
+  .cue-wire::after,
+  .live-dot::after,
+  .typing span {
+    animation: none;
+  }
+  .preloader {
+    display: none;
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

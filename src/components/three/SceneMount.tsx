@@ -1,0 +1,57 @@
+"use client";
+
+import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
+import CanvasFallback from "./CanvasFallback";
+
+const SceneCanvas = dynamic(() => import("./SceneCanvas"), {
+  ssr: false,
+  loading: () => <CanvasFallback />,
+});
+
+function hasWebGL() {
+  try {
+    const c = document.createElement("canvas");
+    return !!(c.getContext("webgl2") || c.getContext("webgl"));
+  } catch {
+    return false;
+  }
+}
+
+const WAKE_EVENTS = ["pointermove", "pointerdown", "wheel", "touchstart", "keydown", "scroll"] as const;
+
+/**
+ * Defers the three.js chunk (and its shader compilation) until the visitor
+ * first interacts, or a few seconds pass, so WebGL setup never competes
+ * with first paint, hydration or the intro sequence. The CSS fallback glow
+ * holds the space meanwhile and the canvas cross-fades in over it.
+ */
+export default function SceneMount() {
+  const [mount, setMount] = useState(false);
+
+  useEffect(() => {
+    if (!hasWebGL()) return;
+    let idle = 0;
+    const start = () => {
+      cleanup();
+      // Yield one idle slot so the triggering interaction stays responsive.
+      idle =
+        typeof window.requestIdleCallback === "function"
+          ? window.requestIdleCallback(() => setMount(true), { timeout: 400 })
+          : window.setTimeout(() => setMount(true), 50);
+    };
+    const timer = window.setTimeout(start, 4500);
+    const cleanup = () => {
+      clearTimeout(timer);
+      WAKE_EVENTS.forEach((e) => window.removeEventListener(e, start));
+    };
+    WAKE_EVENTS.forEach((e) => window.addEventListener(e, start, { once: true, passive: true }));
+    return () => {
+      cleanup();
+      if (typeof window.cancelIdleCallback === "function") window.cancelIdleCallback(idle);
+      clearTimeout(idle);
+    };
+  }, []);
+
+  return mount ? <SceneCanvas /> : <CanvasFallback />;
+}
