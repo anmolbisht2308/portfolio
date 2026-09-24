@@ -89,8 +89,7 @@ export const site = {
     (process.env.VERCEL_PROJECT_PRODUCTION_URL
       ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
       : "http://localhost:3000"),
-  tagline:
-    "Lead Full Stack Engineer building scalable, real-time web platforms used by 100k+ users.",
+  tagline: "Lead Full Stack Engineer building scalable, real-time web platforms used by 100k+ users.",
   description:
     "Anmol Bisht — Lead Full Stack Engineer at Infiheal. I build real-time, AI-powered platforms with MERN, Next.js, TypeScript and WebSockets, including Healo, an AI coach for emotional health used by 100k+ people.",
   keywords: [
@@ -139,7 +138,7 @@ export const hero = {
 /* ── About ────────────────────────────────────────────────────────────── */
 
 export const about = {
-  kicker: "About",
+  kicker: "Hello",
   lines: [
     "I've spent 2+ years building real-time, AI-powered platforms.",
     "I own systems end-to-end: architecture, performance, deployment and mentoring.",
@@ -170,7 +169,7 @@ export const healo = {
 
   /** Architecture diagram nodes. Rename freely; ids drive the layout. */
   arch: [
-    { id: "client", label: "Client", tech: "React · Next.js" },
+    { id: "client", label: "Client", tech: "React · chat UI" },
     { id: "transport", label: "Stream", tech: "WebSocket · DirectLine" },
     { id: "api", label: "API", tech: "Node.js · Express" },
     { id: "bot", label: "Bot layer", tech: "MS Bot Framework" },
@@ -193,10 +192,7 @@ export const healo = {
       nodes: ["client", "transport"],
       kicker: "02 · Transport",
       title: "Sub-100ms, both directions",
-      points: [
-        "Real-time chat streaming over WebSockets",
-        "DirectLine channel into Microsoft Bot Framework",
-      ],
+      points: ["Real-time chat streaming over WebSockets", "DirectLine channel into Microsoft Bot Framework"],
     },
     {
       nodes: ["transport", "api"],
@@ -285,34 +281,172 @@ export const healo = {
 
 /* ── Skills (system map) ──────────────────────────────────────────────── */
 
+export type ProjectId = "healo" | "website" | "dashboards";
+
+export type Skill = {
+  name: string;
+  /** Projects this skill connects to on the map. */
+  usedIn?: ProjectId[];
+  /** One line shown when the skill is hovered / tapped. */
+  where: string;
+};
+
+export type SkillGroup = { id: string; label: string; items: Skill[] };
+
 export const skills = {
+  index: "02",
+  kicker: "Stack as a system",
+  title: [{ text: "Not a logo wall." }, { text: "A system.", em: true }] satisfies Segment[],
+  intro: "Every tool here is wired to something I shipped. Hover or tap a node to trace where it runs.",
+  projects: [
+    { id: "healo", label: "Healo", sub: "AI coach · 100k+ users" },
+    { id: "website", label: "Infiheal website", sub: "Angular · tests · blog" },
+    { id: "dashboards", label: "Internal dashboards", sub: "Data visualisation" },
+  ] satisfies { id: ProjectId; label: string; sub: string }[],
   groups: [
-    { id: "frontend", label: "Frontend", items: ["React", "Next.js", "TypeScript", "Angular"] },
-    { id: "backend", label: "Backend", items: ["Node.js", "Express.js", "Go", "REST APIs", "System design"] },
-    { id: "realtime", label: "Real-time", items: ["WebSockets", "Chat streaming", "Bot Framework", "DirectLine"] },
-    { id: "data", label: "Data", items: ["MongoDB", "Dashboards & dataviz", "Web analytics"] },
-    { id: "cloud", label: "Cloud", items: ["AWS"] },
-    { id: "ai", label: "AI", items: ["ML model integration", "Conversational products"] },
-  ],
+    {
+      id: "frontend",
+      label: "Frontend",
+      items: [
+        { name: "React", usedIn: ["healo"], where: "Healo's chat interface, part of the MERN platform I architected." },
+        { name: "Next.js", where: "A core specialism, and what this portfolio is built with." },
+        { name: "TypeScript", where: "A core specialism across my day-to-day work." },
+        {
+          name: "Angular",
+          usedIn: ["website"],
+          where: "The Infiheal company website, with interactive tests and a dynamic blog.",
+        },
+      ],
+    },
+    {
+      id: "backend",
+      label: "Backend",
+      items: [
+        {
+          name: "Node.js",
+          usedIn: ["healo"],
+          where: "Healo's backend: APIs for chatbot features and data management.",
+        },
+        { name: "Express.js", usedIn: ["healo"], where: "Healo's API layer, the backbone between chat and data." },
+        {
+          name: "REST APIs",
+          usedIn: ["healo", "dashboards"],
+          where: "Chatbot features in Healo and data endpoints for the internal dashboards.",
+        },
+        { name: "Go", where: "Growing depth: backend services and system design." },
+        { name: "System design", usedIn: ["healo"], where: "Owning Healo's architecture end-to-end." },
+      ],
+    },
+    {
+      id: "realtime",
+      label: "Real-time",
+      items: [
+        { name: "WebSockets", usedIn: ["healo"], where: "Healo's real-time chat, with sub-100ms latency." },
+        { name: "Chat streaming", usedIn: ["healo"], where: "Token-by-token replies and chat regeneration in Healo." },
+        { name: "Bot Framework", usedIn: ["healo"], where: "Microsoft Bot Framework powering Healo's conversations." },
+        {
+          name: "DirectLine",
+          usedIn: ["healo"],
+          where: "The DirectLine channel connecting Healo's client to the bot.",
+        },
+      ],
+    },
+    {
+      id: "data",
+      label: "Data",
+      items: [
+        { name: "MongoDB", usedIn: ["healo"], where: "Healo's data layer (MERN)." },
+        {
+          name: "Data visualisation",
+          usedIn: ["dashboards"],
+          where: "Internal dashboards used across product and business teams.",
+        },
+        { name: "Web analytics", where: "Measuring how people actually use what I ship." },
+      ],
+    },
+    {
+      id: "cloud",
+      label: "Cloud",
+      items: [{ name: "AWS", usedIn: ["healo"], where: "Healo's image builds, storage and infrastructure." }],
+    },
+    {
+      id: "ai",
+      label: "AI",
+      items: [
+        {
+          name: "ML integration",
+          usedIn: ["healo"],
+          where: "Integrating models into Healo, with the AI team on optimisation.",
+        },
+        {
+          name: "Conversational UX",
+          usedIn: ["healo"],
+          where: "Clinically sound, empathetic flows, built with psychologists and designers.",
+        },
+      ],
+    },
+  ] satisfies SkillGroup[],
   leadership: ["Mentoring interns", "Agile delivery", "Bridging AI · design · clinical · engineering"],
 };
 
 /* ── Experience ───────────────────────────────────────────────────────── */
 
+export const experienceMeta = {
+  index: "03",
+  kicker: "Event log",
+  title: [{ text: "A packet trace" }, { text: "of my career.", em: true }] satisfies Segment[],
+  promotion: "Intern → Lead in 13 months",
+};
+
 export const experience: Role[] = [
   { company: "Infiheal", role: "Lead Full Stack Engineer", start: "2024-12", end: null, display: "Dec 2024 – Present" },
   { company: "Infiheal", role: "SDE", start: "2024-06", end: "2024-11", display: "Jun – Nov 2024" },
   { company: "Infiheal", role: "SDE Intern", start: "2023-11", end: "2024-06", display: "Nov 2023 – Jun 2024" },
-  { company: "Blazpay", role: "Frontend Developer", start: "2023-09", end: "2023-11", display: "Sep – Nov 2023", note: "One-stop crypto financial platform" },
-  { company: "Honchi Solution", role: "Frontend Web Developer", start: "2023-10", end: "2023-10", display: "Oct 2023", note: "honchi.ai", href: "https://honchi.ai" },
+  {
+    company: "Blazpay",
+    role: "Frontend Developer",
+    start: "2023-09",
+    end: "2023-11",
+    display: "Sep – Nov 2023",
+    note: "One-stop crypto financial platform",
+  },
+  {
+    company: "Honchi Solution",
+    role: "Frontend Web Developer",
+    start: "2023-10",
+    end: "2023-10",
+    display: "Oct 2023",
+    note: "honchi.ai",
+    href: "https://honchi.ai",
+  },
   { company: "MasterJi", role: "Web Developer", start: "2022-10", end: "2022-11", display: "Oct – Nov 2022" },
-  { company: "OneOBit", role: "Web Developer", start: "2022-08", end: "2022-10", display: "Aug – Oct 2022", remote: true },
+  {
+    company: "OneOBit",
+    role: "Web Developer",
+    start: "2022-08",
+    end: "2022-10",
+    display: "Aug – Oct 2022",
+    remote: true,
+  },
   { company: "Crime Free Bharat", role: "Associate SDE", start: "2022-04", end: "2022-06", display: "Apr – Jun 2022" },
 ];
 
 /* ── Other work ───────────────────────────────────────────────────────── */
 
-export const work = [
+export const workMeta = {
+  index: "04",
+  kicker: "Other work",
+  title: [{ text: "More things" }, { text: "I've shipped.", em: true }] satisfies Segment[],
+};
+
+export const work: {
+  title: string;
+  kind: string;
+  body: string;
+  href?: string;
+  /** [ADD screenshot] path under /public, e.g. "/work/blazpay.jpg". Empty = placeholder art. */
+  image: string;
+}[] = [
   {
     title: "Blazpay",
     kind: "Frontend · Crypto fintech",
@@ -343,10 +477,9 @@ export const work = [
 /* ── Contact ──────────────────────────────────────────────────────────── */
 
 export const contact = {
+  index: "05",
   kicker: "Open a connection",
-  headline: [
-    { text: "Let's build something" },
-    { text: "that listens.", em: true },
-  ] satisfies Segment[],
+  cta: "Say hello",
+  headline: [{ text: "Let's build something" }, { text: "that listens.", em: true }] satisfies Segment[],
   body: "Real-time products, AI conversations, or a team that needs someone to own the whole stack. I'd love to hear about it.",
 };

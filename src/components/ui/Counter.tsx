@@ -1,7 +1,8 @@
 "use client";
 
 import { useRef } from "react";
-import { gsap, useGSAP } from "@/lib/gsap";
+import { gsap } from "@/lib/gsap";
+import { useLazyGSAP } from "@/lib/hooks/useLazyGSAP";
 
 /**
  * Counts from `from` to `to` when scrolled into view. The final value is
@@ -22,7 +23,7 @@ export default function Counter({
 }) {
   const ref = useRef<HTMLSpanElement>(null);
 
-  useGSAP(
+  useLazyGSAP(
     () => {
       const el = ref.current;
       if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;

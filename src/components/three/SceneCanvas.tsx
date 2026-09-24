@@ -26,7 +26,11 @@ export default function SceneCanvas() {
   const [ready, setReady] = useState(false);
   const settings = TIER_SETTINGS[tier];
 
-  const inView = useSyncExternalStore(subscribeScene, () => sceneState.inView, () => true);
+  const inView = useSyncExternalStore(
+    subscribeScene,
+    () => sceneState.inView,
+    () => true,
+  );
   const tabVisible = useSyncExternalStore(
     subscribeVisibility,
     () => document.visibilityState === "visible",

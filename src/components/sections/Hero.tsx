@@ -69,7 +69,12 @@ export default function Hero() {
                 style={d(600)}
               >
                 See Healo
-                <span aria-hidden="true" className="transition-transform duration-(--dur-base) ease-(--ease-signal) group-hover:translate-y-0.5">↓</span>
+                <span
+                  aria-hidden="true"
+                  className="transition-transform duration-(--dur-base) ease-(--ease-signal) group-hover:translate-y-0.5"
+                >
+                  ↓
+                </span>
               </a>
             </Magnetic>
             <Magnetic>

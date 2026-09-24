@@ -40,7 +40,10 @@ export default function SceneMount() {
           ? window.requestIdleCallback(() => setMount(true), { timeout: 400 })
           : window.setTimeout(() => setMount(true), 50);
     };
-    const timer = window.setTimeout(start, 4500);
+    // Desktop also wakes on a timer for visitors who just watch; touch devices
+    // wake on their first touch/scroll, keeping mobile first load WebGL-free.
+    const fine = matchMedia("(hover: hover) and (pointer: fine)").matches;
+    const timer = fine ? window.setTimeout(start, 4500) : 0;
     const cleanup = () => {
       clearTimeout(timer);
       WAKE_EVENTS.forEach((e) => window.removeEventListener(e, start));

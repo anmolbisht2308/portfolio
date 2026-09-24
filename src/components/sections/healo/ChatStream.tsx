@@ -1,10 +1,8 @@
 "use client";
 
-import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { healo } from "@/content/content";
 import { useReducedMotion } from "@/lib/hooks/useReducedMotion";
-import { EASE_BEZIER } from "@/lib/motion";
 import { chatBus } from "./chat-bus";
 
 type Phase = "idle" | "thinking" | "streaming" | "done";
@@ -176,44 +174,36 @@ export default function ChatStream() {
         className="flex-1 space-y-4 overflow-y-auto px-5 py-5 [scrollbar-width:thin]"
       >
         <p className="text-mono-label text-center text-lo">{healo.chat.disclaimer}</p>
-        <AnimatePresence>
-          {sent ? (
-            <motion.div
-              key="user"
-              initial={{ opacity: 0, y: 16, scale: 0.97 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 0.5, ease: EASE_BEZIER.signal }}
-              className="ml-auto max-w-[85%] rounded-2xl rounded-br-md bg-raised px-4 py-3 text-hi"
-            >
-              {scenario.user}
-            </motion.div>
-          ) : null}
-          {phase !== "idle" ? (
-            <motion.div
-              key="reply"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, ease: EASE_BEZIER.signal }}
-              className="max-w-[92%]"
-            >
-              {phase === "thinking" ? (
-                <div className="typing flex w-fit items-center gap-1.5 rounded-2xl rounded-bl-md border border-line px-4 py-4" aria-label="Healo is typing">
-                  <span />
-                  <span />
-                  <span />
-                </div>
-              ) : (
-                <p
-                  className={`rounded-2xl rounded-bl-md border border-line bg-base/40 px-4 py-3 leading-relaxed text-md ${
-                    phase === "streaming" ? "caret" : ""
-                  }`}
-                >
-                  {text}
-                </p>
-              )}
-            </motion.div>
-          ) : null}
-        </AnimatePresence>
+        {sent ? (
+          <div
+            key="user"
+            className="anim-msg-in ml-auto max-w-[85%] rounded-2xl rounded-br-md bg-raised px-4 py-3 text-hi"
+          >
+            {scenario.user}
+          </div>
+        ) : null}
+        {phase !== "idle" ? (
+          <div key="reply" className="anim-msg-in max-w-[92%]">
+            {phase === "thinking" ? (
+              <div
+                className="typing flex w-fit items-center gap-1.5 rounded-2xl rounded-bl-md border border-line px-4 py-4"
+                aria-label="Healo is typing"
+              >
+                <span />
+                <span />
+                <span />
+              </div>
+            ) : (
+              <p
+                className={`rounded-2xl rounded-bl-md border border-line bg-base/40 px-4 py-3 leading-relaxed text-md ${
+                  phase === "streaming" ? "caret" : ""
+                }`}
+              >
+                {text}
+              </p>
+            )}
+          </div>
+        ) : null}
       </div>
 
       {/* Composer / controls */}

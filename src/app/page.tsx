@@ -1,9 +1,27 @@
-import { contact, site } from "@/content/content";
+import dynamic from "next/dynamic";
+import { Suspense } from "react";
+import { site } from "@/content/content";
+import Footer from "@/components/global/Footer";
 import Nav from "@/components/global/Nav";
-import Hero from "@/components/sections/Hero";
+import About from "@/components/sections/about/About";
 import HealoSection from "@/components/sections/healo/HealoSection";
+import Hero from "@/components/sections/Hero";
 import SceneDirector from "@/components/three/SceneDirector";
 import SceneMount from "@/components/three/SceneMount";
+
+/*
+ * Below-the-fold sections are still server-rendered (full HTML for SEO and
+ * no layout shift) but split into their own chunks.
+ *
+ * Every section also sits in its own <Suspense> boundary so React hydrates
+ * them one at a time, yielding to the main thread in between, instead of
+ * one long blocking task. Boundaries hydrate in document order, so pinned
+ * sections (About, Healo) still create their pins before any trigger below.
+ */
+const Skills = dynamic(() => import("@/components/sections/skills/Skills"));
+const Experience = dynamic(() => import("@/components/sections/experience/Experience"));
+const Work = dynamic(() => import("@/components/sections/work/Work"));
+const Contact = dynamic(() => import("@/components/sections/contact/Contact"));
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -31,18 +49,13 @@ export default function Home() {
       <SceneDirector />
       <Nav />
       <main id="main">
-        <Hero />
-        <HealoSection />
-        {/* About, Stack, Experience, Work and Contact are the next sections to build. */}
-        <section id="contact" aria-label="Contact" className="relative z-10 border-t border-line/60 bg-base">
-          <div className="container-x py-24">
-            <p className="text-mono-label text-lo">{contact.kicker}</p>
-            <a href={`mailto:${site.email}`} className="mt-4 inline-block font-display text-[clamp(1.5rem,6.5vw,4rem)] font-semibold tracking-tight break-all text-hi hover:text-ember">
-              {site.email}
-            </a>
-          </div>
-        </section>
+        {[Hero, About, HealoSection, Skills, Experience, Work, Contact].map((Section, i) => (
+          <Suspense key={i}>
+            <Section />
+          </Suspense>
+        ))}
       </main>
+      <Footer />
     </>
   );
 }

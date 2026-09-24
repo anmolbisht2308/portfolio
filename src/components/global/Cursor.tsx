@@ -34,7 +34,9 @@ export default function Cursor() {
       x.set(e.clientX);
       y.set(e.clientY);
       const target = e.target as Element | null;
-      const interactive = target?.closest<HTMLElement>("a, button, [role='button'], input, textarea, select, [data-cursor]");
+      const interactive = target?.closest<HTMLElement>(
+        "a, button, [role='button'], input, textarea, select, [data-cursor]",
+      );
       const labelled = target?.closest<HTMLElement>("[data-cursor-label]");
       setLabel(labelled?.dataset.cursorLabel ?? null);
       if (!interactive) setMode("default");

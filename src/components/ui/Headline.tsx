@@ -26,7 +26,10 @@ export default function Headline({
           return (
             <span key={`${s}-${w}`}>
               <span className="reveal-word">
-                <span className={seg.em ? "human pr-[0.06em]" : undefined} style={{ "--i": idx } as React.CSSProperties}>
+                <span
+                  className={seg.em ? "human pr-[0.06em]" : undefined}
+                  style={{ "--i": idx } as React.CSSProperties}
+                >
                   {word}
                 </span>
               </span>{" "}

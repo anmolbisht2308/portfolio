@@ -34,10 +34,28 @@ const EDGES: Record<EdgeId, { from: ArchNodeId; to: ArchNodeId; d: string }> = {
 
 /** [edge, forward?] hops. */
 type Route = [EdgeId, boolean][];
-const REQUEST: Route = [["ct", true], ["ta", true], ["ab", true], ["bi", true]];
-const RESPONSE: Route = [["bi", false], ["ab", false], ["ta", false], ["ct", false]];
+const REQUEST: Route = [
+  ["ct", true],
+  ["ta", true],
+  ["ab", true],
+  ["bi", true],
+];
+const RESPONSE: Route = [
+  ["bi", false],
+  ["ab", false],
+  ["ta", false],
+  ["ct", false],
+];
 /** The scroll "tour": client → … → model, back up, then down to data. */
-const TOUR: Route = [["ct", true], ["ta", true], ["ab", true], ["bi", true], ["bi", false], ["ab", false], ["ad", true]];
+const TOUR: Route = [
+  ["ct", true],
+  ["ta", true],
+  ["ab", true],
+  ["bi", true],
+  ["bi", false],
+  ["ab", false],
+  ["ad", true],
+];
 
 const POOL = 40;
 
@@ -157,7 +175,10 @@ export default function ArchitectureDiagram({
         el.setAttribute("cx", pt.x.toFixed(1));
         el.setAttribute("cy", pt.y.toFixed(1));
         el.setAttribute("r", p.kind === "human" ? "5" : p.kind === "token" ? "2.6" : "2.2");
-        el.setAttribute("class", p.kind === "human" ? "fill-ember" : p.kind === "token" ? "fill-signal-core" : "fill-signal");
+        el.setAttribute(
+          "class",
+          p.kind === "human" ? "fill-ember" : p.kind === "token" ? "fill-signal-core" : "fill-signal",
+        );
       }
 
       // Scroll tour packet: eases toward the scroll position.
@@ -206,8 +227,8 @@ export default function ArchitectureDiagram({
       >
         <title id="arch-title">Healo system architecture</title>
         <desc id="arch-desc">
-          The client connects over WebSocket and DirectLine to a Node.js and Express API. The API talks to the
-          Microsoft Bot Framework, which calls the AI model, and to MongoDB on AWS for data.
+          The client connects over WebSocket and DirectLine to a Node.js and Express API. The API talks to the Microsoft
+          Bot Framework, which calls the AI model, and to MongoDB on AWS for data.
         </desc>
 
         <defs>

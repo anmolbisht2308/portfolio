@@ -2,7 +2,8 @@
 
 import { useRef } from "react";
 import { healo } from "@/content/content";
-import { gsap, useGSAP } from "@/lib/gsap";
+import { gsap } from "@/lib/gsap";
+import { useLazyGSAP } from "@/lib/hooks/useLazyGSAP";
 import SplitReveal from "@/components/ui/SplitReveal";
 
 /**
@@ -13,7 +14,7 @@ import SplitReveal from "@/components/ui/SplitReveal";
 export default function Collaborations() {
   const root = useRef<HTMLDivElement>(null);
 
-  useGSAP(
+  useLazyGSAP(
     () => {
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
@@ -47,7 +48,10 @@ export default function Collaborations() {
             className="surface group relative overflow-hidden rounded-[10px] p-6 transition-colors duration-(--dur-base) hover:border-signal/50"
           >
             <p className="text-mono-label flex items-center gap-2 text-lo">
-              <span className="size-1.5 rounded-full bg-signal transition-colors duration-(--dur-fast) group-hover:bg-ember" aria-hidden="true" />
+              <span
+                className="size-1.5 rounded-full bg-signal transition-colors duration-(--dur-fast) group-hover:bg-ember"
+                aria-hidden="true"
+              />
               <span
                 aria-hidden="true"
                 className="h-px w-6 origin-left scale-x-50 bg-line transition-[transform,background-color] duration-(--dur-slow) ease-(--ease-signal) group-hover:scale-x-100 group-hover:bg-ember"

@@ -23,7 +23,7 @@ export default function Preloader() {
       root.dataset.intro = "skip";
       setGone(true);
     };
-    const done = setTimeout(() => setGone(true), 1600);
+    const done = setTimeout(() => setGone(true), 1300);
     window.addEventListener("pointerdown", skip, { once: true });
     window.addEventListener("keydown", skip, { once: true });
     return () => {
@@ -36,11 +36,7 @@ export default function Preloader() {
   if (gone) return null;
 
   return (
-    <div
-      className="preloader fixed inset-0 z-[100] grid place-items-center bg-void"
-      role="status"
-      aria-label="Loading"
-    >
+    <div className="preloader fixed inset-0 z-[100] grid place-items-center bg-void" role="status" aria-label="Loading">
       <div className="flex flex-col items-center gap-6">
         <div className="flex items-center gap-0" aria-hidden="true">
           <span className="size-2.5 rounded-full bg-signal-core shadow-[0_0_14px_var(--color-signal)]" />

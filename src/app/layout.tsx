@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
 import { site } from "@/content/content";
-import Cursor from "@/components/global/Cursor";
+import CursorMount from "@/components/global/CursorMount";
 import Grain from "@/components/global/Grain";
 import IntroScript from "@/components/global/IntroScript";
 import Preloader from "@/components/global/Preloader";
@@ -21,8 +21,9 @@ const serif = Instrument_Serif({
   weight: "400",
   style: "italic",
   display: "swap",
+  preload: false, // accent only; only the LCP display face is preloaded
 });
-const sans = Geist({ subsets: ["latin"], variable: "--font-geist", display: "swap" });
+const sans = Geist({ subsets: ["latin"], variable: "--font-geist", display: "swap", preload: false });
 const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono", display: "swap", preload: false });
 
 const title = `${site.name} — ${site.shortTitle}`;
@@ -79,7 +80,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         {children}
         <ScrollStream />
         <Grain />
-        <Cursor />
+        <CursorMount />
       </body>
     </html>
   );

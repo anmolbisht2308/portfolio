@@ -171,7 +171,7 @@ html.has-cursor * {
    The head script sets data-intro="skip" for returning visitors and
    reduced-motion users; clicking/pressing any key also skips.          */
 :root {
-  --intro-delay: 1150ms;
+  --intro-delay: 850ms;
 }
 html[data-intro="skip"] {
   --intro-delay: 0ms;
@@ -194,6 +194,9 @@ html[data-intro="skip"] {
   animation: word-in var(--dur-reveal) var(--ease-signal);
   animation-delay: calc(var(--intro-delay) + var(--i, 0) * 60ms);
 }
+html[data-intro="skip"] .reveal-word > span {
+  animation-fill-mode: backwards;
+}
 @keyframes word-in {
   from {
     transform: translateY(105%);
@@ -204,15 +207,19 @@ html[data-intro="skip"] {
 }
 
 .fade-up {
-  opacity: 0;
-  transform: translateY(14px);
-  animation: fade-up var(--dur-slow) var(--ease-signal) forwards;
+  /* Same trick as the headline: painted in place under the preloader (so it
+     counts for LCP at first paint), then faded in as the preloader lifts. */
+  animation: fade-up var(--dur-slow) var(--ease-signal);
   animation-delay: calc(var(--intro-delay) + var(--d, 0ms));
 }
+/* No preloader to hide behind (returning visitor): start hidden instead. */
+html[data-intro="skip"] .fade-up {
+  animation-fill-mode: backwards;
+}
 @keyframes fade-up {
-  to {
-    opacity: 1;
-    transform: none;
+  from {
+    opacity: 0;
+    transform: translateY(14px);
   }
 }
 
@@ -241,6 +248,39 @@ html[data-intro="skip"] {
   70%,
   100% {
     transform: scale(3);
+    opacity: 0;
+  }
+}
+
+/* Component micro-transitions (keyed remounts replay these) */
+.anim-msg-in {
+  animation: msg-in var(--dur-base) var(--ease-signal) both;
+}
+@keyframes msg-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.97);
+  }
+}
+.anim-swap-in {
+  animation: swap-in 300ms var(--ease-signal) both;
+}
+@keyframes swap-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.6em);
+  }
+}
+
+/* CTA node pulse: a tighter ring than .live-dot so it never spills on phones */
+@keyframes cta-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  70%,
+  100% {
+    transform: scale(1.35);
     opacity: 0;
   }
 }
@@ -328,12 +368,24 @@ html[data-intro="skip"] {
   animation: grain 0.9s steps(6) infinite;
 }
 @keyframes grain {
-  0% { transform: translate(0, 0); }
-  20% { transform: translate(-4%, 3%); }
-  40% { transform: translate(3%, -5%); }
-  60% { transform: translate(-6%, -2%); }
-  80% { transform: translate(5%, 4%); }
-  100% { transform: translate(0, 0); }
+  0% {
+    transform: translate(0, 0);
+  }
+  20% {
+    transform: translate(-4%, 3%);
+  }
+  40% {
+    transform: translate(3%, -5%);
+  }
+  60% {
+    transform: translate(-6%, -2%);
+  }
+  80% {
+    transform: translate(5%, 4%);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
 }
 
 /* Preloader */
@@ -353,7 +405,7 @@ html[data-intro="skip"] .preloader {
 .handshake-line {
   transform-origin: left;
   transform: scaleX(0);
-  animation: handshake 700ms var(--ease-transit) 120ms forwards;
+  animation: handshake 520ms var(--ease-transit) 80ms forwards;
 }
 @keyframes handshake {
   to {
@@ -363,7 +415,11 @@ html[data-intro="skip"] .preloader {
 
 /* Surfaces (a utility, so responsive overrides like lg:bg-none win) */
 @utility surface {
-  background-image: linear-gradient(180deg, color-mix(in oklab, var(--color-surface) 92%, white 3%), var(--color-surface));
+  background-image: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--color-surface) 92%, white 3%),
+    var(--color-surface)
+  );
   background-color: var(--color-surface);
   border: 1px solid var(--color-line);
   box-shadow: inset 0 1px 0 0 rgb(255 255 255 / 0.04);
@@ -373,6 +429,10 @@ html[data-intro="skip"] .preloader {
 @media (prefers-reduced-motion: reduce) {
   :root {
     --intro-delay: 0ms;
+  }
+  .anim-msg-in,
+  .anim-swap-in {
+    animation: none;
   }
   .reveal-word > span,
   .fade-up {

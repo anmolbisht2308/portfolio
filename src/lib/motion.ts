@@ -31,8 +31,7 @@ export const SPRING = {
 } as const;
 
 /** transit easing as a plain function, for per-frame JS (packets, rAF loops). */
-export const easeInOutCubic = (t: number) =>
-  t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+export const easeInOutCubic = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
 export const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 export const lerp = (a: number, b: number, t: number) => a + (b - a) * t;

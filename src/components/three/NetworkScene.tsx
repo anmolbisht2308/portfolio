@@ -149,7 +149,10 @@ export default function NetworkScene({ nodeCount, packetCount, dustCount, still 
     );
     packetGeo.setAttribute(
       "aWarm",
-      new THREE.BufferAttribute(Float32Array.from(packets, (p) => (p.warm ? 1 : 0)), 1),
+      new THREE.BufferAttribute(
+        Float32Array.from(packets, (p) => (p.warm ? 1 : 0)),
+        1,
+      ),
     );
     packetGeo.setAttribute(
       "aAlpha",
@@ -283,12 +286,13 @@ export default function NetworkScene({ nodeCount, packetCount, dustCount, still 
     const wide = aspect > 1.15;
     const scale = THREE.MathUtils.clamp(aspect * 0.85, 0.62, 1);
     o.position.x = lerp(wide ? 1.9 : 0, 0, converge);
-    o.position.y = wide ? 0 : 1.5;
+    o.position.y = lerp(wide ? 0 : 1.5, 0, converge);
     o.scale.setScalar(scale);
 
     /* Camera: dolly-in on scroll. */
     const cam = camera as THREE.PerspectiveCamera;
-    cam.position.z = lerp(10, 6.2, easeInOutCubic(clamp01(s.dolly)));
+    // …then eases back out as the network calms (About), framing the ring.
+    cam.position.z = lerp(10, 6.2, easeInOutCubic(clamp01(s.dolly))) + s.calm * 2.6;
 
     /* Rotation + cursor parallax. */
     s.spin += dt * 0.06 * (1 - s.calm * 0.7) * (1 - converge);
@@ -346,6 +350,11 @@ export default function NetworkScene({ nodeCount, packetCount, dustCount, still 
       nodePos[i3 + 1] = y;
       nodePos[i3 + 2] = z;
       pulse[i] *= Math.pow(0.12, dt); // exponential ack decay
+      // Converged: the single CTA node breathes like a live connection.
+      if (converge > 0.85 && graph.hub[i]) {
+        pulse[i] = Math.max(pulse[i], (0.5 + 0.5 * Math.sin(time * 2.2)) * 0.7 * converge);
+        warm[i] = converge;
+      }
     }
     nodeGeo.attributes.position.needsUpdate = true;
     nodeGeo.attributes.aPulse.needsUpdate = true;

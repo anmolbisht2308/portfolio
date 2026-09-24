@@ -30,38 +30,64 @@ export default function SplitReveal({
   const ref = useRef<HTMLParagraphElement & HTMLHeadingElement & HTMLDivElement>(null);
 
   useGSAP(
-    () => {
+    (_ctx, contextSafe) => {
       const el = ref.current;
       if (!el) return;
-      const mm = gsap.matchMedia();
-      mm.add(
-        { motion: "(prefers-reduced-motion: no-preference)", reduce: "(prefers-reduced-motion: reduce)" },
-        (ctx) => {
-          if (ctx.conditions?.reduce) {
-            gsap.from(el, { autoAlpha: 0, duration: 0.3, ease: "none", scrollTrigger: { trigger: el, start, once: true } });
-            return;
-          }
-          SplitText.create(el, {
-            type: by === "lines" ? "lines" : "words,lines",
-            mask: by,
-            autoSplit: true,
-            // Keep the original text readable to assistive tech without
-            // adding aria-label to elements where it's prohibited (e.g. <p>).
-            aria: "none",
-            linesClass: "split-line",
-            onSplit: (self) =>
-              gsap.from(by === "lines" ? self.lines : self.words, {
-                yPercent: 110,
-                duration: 1.1,
-                ease: "signal",
-                stagger: by === "lines" ? STAGGER.line : STAGGER.word,
-                delay,
+      let mm: gsap.MatchMedia | undefined;
+
+      // Split lazily: only when the element comes within half a viewport of
+      // the screen. Splitting every heading at hydration is one long,
+      // layout-heavy task; this spreads the work out and keeps text intact
+      // (and fully readable) until just before it's revealed.
+      const init = contextSafe!(() => {
+        mm = gsap.matchMedia();
+        mm.add(
+          { motion: "(prefers-reduced-motion: no-preference)", reduce: "(prefers-reduced-motion: reduce)" },
+          (ctx) => {
+            if (ctx.conditions?.reduce) {
+              gsap.from(el, {
+                autoAlpha: 0,
+                duration: 0.3,
+                ease: "none",
                 scrollTrigger: { trigger: el, start, once: true },
-              }),
-          });
+              });
+              return;
+            }
+            SplitText.create(el, {
+              type: by === "lines" ? "lines" : "words,lines",
+              mask: by,
+              autoSplit: true,
+              // Keep the original text readable to assistive tech without
+              // adding aria-label to elements where it's prohibited (e.g. <p>).
+              aria: "none",
+              linesClass: "split-line",
+              onSplit: (self) =>
+                gsap.from(by === "lines" ? self.lines : self.words, {
+                  yPercent: 110,
+                  duration: 1.1,
+                  ease: "signal",
+                  stagger: by === "lines" ? STAGGER.line : STAGGER.word,
+                  delay,
+                  scrollTrigger: { trigger: el, start, once: true },
+                }),
+            });
+          },
+        );
+      });
+
+      const io = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry.isIntersecting) return;
+          io.disconnect();
+          init();
         },
+        { rootMargin: "0px 0px 50% 0px" },
       );
-      return () => mm.revert();
+      io.observe(el);
+      return () => {
+        io.disconnect();
+        mm?.revert();
+      };
     },
     { scope: ref },
   );
