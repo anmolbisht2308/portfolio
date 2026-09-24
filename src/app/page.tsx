@@ -20,8 +20,12 @@ import SceneMount from "@/components/three/SceneMount";
  */
 const Skills = dynamic(() => import("@/components/sections/skills/Skills"));
 const Experience = dynamic(() => import("@/components/sections/experience/Experience"));
+const Activity = dynamic(() => import("@/components/sections/activity/Activity"));
 const Work = dynamic(() => import("@/components/sections/work/Work"));
 const Contact = dynamic(() => import("@/components/sections/contact/Contact"));
+
+// Re-render (and re-fetch the GitHub calendar) at most once a day.
+export const revalidate = 86400;
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -49,7 +53,7 @@ export default function Home() {
       <SceneDirector />
       <Nav />
       <main id="main">
-        {[Hero, About, HealoSection, Skills, Experience, Work, Contact].map((Section, i) => (
+        {[Hero, About, HealoSection, Skills, Experience, Activity, Work, Contact].map((Section, i) => (
           <Suspense key={i}>
             <Section />
           </Suspense>

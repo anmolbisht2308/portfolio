@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { healo, type ArchNodeId } from "@/content/content";
-import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
+import { gsap, PLAY_ONCE, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import ArchitectureDiagram from "./ArchitectureDiagram";
 import ChatStream from "./ChatStream";
 
@@ -69,7 +69,7 @@ export default function HealoStage() {
               autoAlpha: 0,
               duration: 1.1,
               stagger: 0.12,
-              scrollTrigger: { trigger: stage.current, start: "top 75%", once: true },
+              scrollTrigger: { trigger: stage.current, start: "top 75%", ...PLAY_ONCE },
             });
             return;
           }

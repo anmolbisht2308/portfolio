@@ -11,8 +11,9 @@ Built with Next.js (App Router) · TypeScript (strict) · Tailwind CSS v4 · Rea
 3. **Healo:** pinned case study. A token-streaming chat demo (stop/regenerate) drives packets through an SVG architecture diagram; five scroll chapters; collaborators; count-up impact stats. On mobile the chapters become a swipe carousel.
 4. **Stack:** the skills as a system map. Hover or focus a skill to light its wires to the products it powers; on mobile, grouped chips that expand to show where each skill is used.
 5. **Log:** experience as a packet trace. Each role arrives as a message, and the Infiheal roles form a promotion path.
-6. **Other work:** 3D-tilt cards with pointer-following light and a magnetic drift.
-7. **Contact:** the network converges into a single node that *becomes* the call-to-action; copy-to-clipboard email, LinkedIn, GitHub, résumé.
+6. **Activity:** your GitHub contribution calendar as a 3D city of days, one bar per day, like GitHub's graph. Pick a year and bars morph in a wave, a scan line sweeps the weeks, and hover or tap reads out any day. The busiest day glows amber.
+7. **Other work:** 3D-tilt cards with pointer-following light and a magnetic drift.
+8. **Contact:** the network converges into a single node that *becomes* the call-to-action; copy-to-clipboard email, LinkedIn, GitHub, résumé.
 
 ## Run it
 
@@ -23,13 +24,23 @@ npm run build && npm start   # production build (use this for perf checks)
 npm run lint
 ```
 
-Deploys to Vercel with zero config. Set `NEXT_PUBLIC_SITE_URL` once you have a custom domain (used for canonical URL, sitemap, OG); otherwise Vercel's production URL is used automatically.
+Deploys to Vercel with zero config.
+
+### GitHub contributions data
+
+The Activity section reads `site.githubUsername` from `content.ts`. Data is fetched on the server at build time and refreshed daily (ISR), so visitors never wait on GitHub:
+
+- **Recommended:** add a `GITHUB_TOKEN` environment variable in Vercel (a fine-grained token with *no* permissions is enough for public contributions). This uses GitHub's official GraphQL API.
+- **Without a token:** it falls back to the public `github-contributions-api.jogruber.de` service.
+- **If both are unreachable:** it renders clearly labelled sample data, so a deploy never fails because of GitHub.
+
+Set `NEXT_PUBLIC_SITE_URL` once you have a custom domain (used for canonical URL, sitemap, OG); otherwise Vercel's production URL is used automatically.
 
 ## Editing content
 
 **Everything you'd want to change lives in [`src/content/content.ts`](src/content/content.ts).** Placeholders marked `[ADD]`:
 
-- `site.github`: your GitHub URL (GitHub links stay hidden while empty)
+- `site.githubUsername` / `site.github`: set to `anmolbisht2308` (this repo's owner); change them if that's not your profile
 - `public/resume.pdf`: drop your résumé here (linked from the nav)
 - `work[].image`: screenshots for the Other Work section
 

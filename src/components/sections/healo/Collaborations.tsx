@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { healo } from "@/content/content";
-import { gsap } from "@/lib/gsap";
+import { gsap, PLAY_ONCE } from "@/lib/gsap";
 import { useLazyGSAP } from "@/lib/hooks/useLazyGSAP";
 import SplitReveal from "@/components/ui/SplitReveal";
 
@@ -23,7 +23,7 @@ export default function Collaborations() {
           autoAlpha: 0,
           duration: 1,
           stagger: 0.09,
-          scrollTrigger: { trigger: root.current, start: "top 80%", once: true },
+          scrollTrigger: { trigger: root.current, start: "top 80%", ...PLAY_ONCE },
         });
       });
     },

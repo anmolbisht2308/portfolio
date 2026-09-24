@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { about, experience, experienceMeta, type Role } from "@/content/content";
-import { gsap } from "@/lib/gsap";
+import { gsap, PLAY_ONCE } from "@/lib/gsap";
 import { useLazyGSAP } from "@/lib/hooks/useLazyGSAP";
 import SectionHeader from "@/components/ui/SectionHeader";
 
@@ -42,7 +42,7 @@ export default function Experience() {
         );
         // Each entry arrives as a message.
         gsap.utils.toArray<HTMLElement>("[data-entry]").forEach((row) => {
-          const tl = gsap.timeline({ scrollTrigger: { trigger: row, start: "top 85%", once: true } });
+          const tl = gsap.timeline({ scrollTrigger: { trigger: row, start: "top 85%", ...PLAY_ONCE } });
           tl.from(row.querySelector("[data-port]"), { scale: 0, duration: 0.5, ease: "ack" })
             .from(row.querySelector("[data-body]"), { x: -24, autoAlpha: 0, duration: 0.8 }, "-=0.25")
             .from(row.querySelector("[data-ts]"), { autoAlpha: 0, duration: 0.4 }, "<");

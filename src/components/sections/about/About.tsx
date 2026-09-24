@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { about } from "@/content/content";
-import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
+import { gsap, PLAY_ONCE, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { sceneState } from "@/components/three/scene-store";
 
 /**
@@ -35,11 +35,13 @@ export default function About() {
 
           // Dim the lines just before the section scrolls into view (not at
           // load), so off-screen text is never low-contrast for audits/no-JS.
+          let dimmed = false;
           ScrollTrigger.create({
             trigger: root.current,
             start: "top bottom",
-            once: true,
             onEnter: () => {
+              if (dimmed) return; // one-shot without `once` (see PLAY_ONCE)
+              dimmed = true;
               gsap.set(lines, { opacity: 0.16 });
               gsap.set("[data-about-meta]", { opacity: 0, y: 16 });
             },
@@ -77,7 +79,7 @@ export default function About() {
           gsap.to("[data-about-meta]", {
             opacity: 1,
             y: 0,
-            scrollTrigger: { trigger: "[data-about-meta]", start: "top 90%", once: true },
+            scrollTrigger: { trigger: "[data-about-meta]", start: "top 90%", ...PLAY_ONCE },
           });
           gsap.to(sceneState, {
             calm: 1,

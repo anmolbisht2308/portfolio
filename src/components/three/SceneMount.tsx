@@ -3,20 +3,12 @@
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import CanvasFallback from "./CanvasFallback";
+import { hasWebGL } from "@/lib/webgl";
 
 const SceneCanvas = dynamic(() => import("./SceneCanvas"), {
   ssr: false,
   loading: () => <CanvasFallback />,
 });
-
-function hasWebGL() {
-  try {
-    const c = document.createElement("canvas");
-    return !!(c.getContext("webgl2") || c.getContext("webgl"));
-  } catch {
-    return false;
-  }
-}
 
 const WAKE_EVENTS = ["pointermove", "pointerdown", "wheel", "touchstart", "keydown", "scroll"] as const;
 

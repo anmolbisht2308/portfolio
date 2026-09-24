@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, type ReactNode } from "react";
-import { gsap, SplitText, useGSAP } from "@/lib/gsap";
+import { gsap, PLAY_ONCE, SplitText, useGSAP } from "@/lib/gsap";
 import { STAGGER } from "@/lib/motion";
 
 /**
@@ -49,7 +49,7 @@ export default function SplitReveal({
                 autoAlpha: 0,
                 duration: 0.3,
                 ease: "none",
-                scrollTrigger: { trigger: el, start, once: true },
+                scrollTrigger: { trigger: el, start, ...PLAY_ONCE },
               });
               return;
             }
@@ -68,7 +68,7 @@ export default function SplitReveal({
                   ease: "signal",
                   stagger: by === "lines" ? STAGGER.line : STAGGER.word,
                   delay,
-                  scrollTrigger: { trigger: el, start, once: true },
+                  scrollTrigger: { trigger: el, start, ...PLAY_ONCE },
                 }),
             });
           },

@@ -76,8 +76,12 @@ export const site = {
   timezone: "Asia/Kolkata",
   email: "anmolbisht7@gmail.com",
   linkedin: "https://www.linkedin.com/in/anmolbisht",
-  /** [ADD] your GitHub profile URL. Links are hidden while this is empty. */
-  github: "",
+  /**
+   * GitHub username: powers the 3D contributions graph and the GitHub link.
+   * Taken from the owner of this repository; change it if yours differs.
+   */
+  githubUsername: "anmolbisht2308",
+  github: "https://github.com/anmolbisht2308",
   /** [ADD] drop your résumé at /public/resume.pdf. */
   resume: "/resume.pdf",
   /**
@@ -112,6 +116,7 @@ export const nav: Link[] = [
   { label: "Healo", href: "#healo" },
   { label: "Stack", href: "#stack" },
   { label: "Log", href: "#experience" },
+  { label: "Activity", href: "#activity" },
   { label: "Work", href: "#work" },
   { label: "Contact", href: "#contact" },
 ];
@@ -433,8 +438,19 @@ export const experience: Role[] = [
 
 /* ── Other work ───────────────────────────────────────────────────────── */
 
-export const workMeta = {
+/* ── GitHub activity ──────────────────────────────────────────────────── */
+
+export const activity = {
   index: "04",
+  kicker: "Commit graph",
+  title: [{ text: "A year of" }, { text: "shipping, in 3D.", em: true }] satisfies Segment[],
+  intro: "Every day of contributions on GitHub, one bar each. Pick a year and drag across it to inspect any day.",
+  /** First year offered in the year picker. */
+  fromYear: 2022,
+};
+
+export const workMeta = {
+  index: "05",
   kicker: "Other work",
   title: [{ text: "More things" }, { text: "I've shipped.", em: true }] satisfies Segment[],
 };
@@ -477,7 +493,7 @@ export const work: {
 /* ── Contact ──────────────────────────────────────────────────────────── */
 
 export const contact = {
-  index: "05",
+  index: "06",
   kicker: "Open a connection",
   cta: "Say hello",
   headline: [{ text: "Let's build something" }, { text: "that listens.", em: true }] satisfies Segment[],

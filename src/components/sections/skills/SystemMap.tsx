@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { skills, type ProjectId, type Skill } from "@/content/content";
-import { gsap } from "@/lib/gsap";
+import { gsap, PLAY_ONCE } from "@/lib/gsap";
 import { useLazyGSAP } from "@/lib/hooks/useLazyGSAP";
 import { useReducedMotion } from "@/lib/hooks/useReducedMotion";
 
@@ -90,7 +90,7 @@ export default function SystemMap() {
         y: 24,
         duration: 0.9,
         stagger: 0.06,
-        scrollTrigger: { trigger: root.current, start: "top 75%", once: true },
+        scrollTrigger: { trigger: root.current, start: "top 75%", ...PLAY_ONCE },
         // Wires are measured with getBoundingClientRect (transform-aware):
         // re-measure once everything has settled into place.
         onComplete: measure,

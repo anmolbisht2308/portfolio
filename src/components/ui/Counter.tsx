@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { gsap } from "@/lib/gsap";
+import { gsap, PLAY_ONCE } from "@/lib/gsap";
 import { useLazyGSAP } from "@/lib/hooks/useLazyGSAP";
 
 /**
@@ -34,7 +34,7 @@ export default function Counter({
         v: to,
         duration: 1.6,
         ease: "signal",
-        scrollTrigger: { trigger: el, start: "top 90%", once: true },
+        scrollTrigger: { trigger: el, start: "top 90%", ...PLAY_ONCE },
         onUpdate: () => {
           el.textContent = `${prefix}${Math.round(state.v)}${suffix}`;
         },

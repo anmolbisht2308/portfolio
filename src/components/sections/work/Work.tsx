@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useRef } from "react";
 import { work, workMeta } from "@/content/content";
-import { gsap } from "@/lib/gsap";
+import { gsap, PLAY_ONCE } from "@/lib/gsap";
 import { useLazyGSAP } from "@/lib/hooks/useLazyGSAP";
 import SectionHeader from "@/components/ui/SectionHeader";
 import TiltCard from "@/components/ui/TiltCard";
@@ -56,7 +56,7 @@ export default function Work() {
           autoAlpha: 0,
           duration: 1.1,
           stagger: 0.1,
-          scrollTrigger: { trigger: "[data-work-grid]", start: "top 80%", once: true },
+          scrollTrigger: { trigger: "[data-work-grid]", start: "top 80%", ...PLAY_ONCE },
         });
       });
     },
