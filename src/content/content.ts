@@ -85,11 +85,13 @@ export const site = {
   /** [ADD] drop your résumé at /public/resume.pdf. */
   resume: "/resume.pdf",
   /**
-   * Canonical URL. Falls back to Vercel's production URL automatically;
+   * Canonical URL. Falls back to Netlify's / Vercel's production URL automatically;
    * set NEXT_PUBLIC_SITE_URL once you have a custom domain.
    */
   url:
     process.env.NEXT_PUBLIC_SITE_URL ??
+    // Netlify sets URL to the site's main address at build time.
+    process.env.URL ??
     (process.env.VERCEL_PROJECT_PRODUCTION_URL
       ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
       : "http://localhost:3000"),

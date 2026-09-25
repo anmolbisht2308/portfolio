@@ -24,13 +24,13 @@ npm run build && npm start   # production build (use this for perf checks)
 npm run lint
 ```
 
-Deploys to Vercel with zero config.
+Deploys to Netlify (see `netlify.toml`; the Next.js runtime is applied automatically) or Vercel with zero config.
 
 ### GitHub contributions data
 
 The Activity section reads `site.githubUsername` from `content.ts`. Data is fetched on the server at build time and refreshed daily (ISR), so visitors never wait on GitHub:
 
-- **Recommended:** add a `GITHUB_TOKEN` environment variable in Vercel (a fine-grained token with *no* permissions is enough for public contributions). This uses GitHub's official GraphQL API.
+- **Recommended:** add a `GITHUB_TOKEN` environment variable in Netlify/Vercel (a fine-grained token with *no* permissions is enough for public contributions). This uses GitHub's official GraphQL API.
 - **Without a token:** it falls back to the public `github-contributions-api.jogruber.de` service.
 - **If both are unreachable:** it renders clearly labelled sample data, so a deploy never fails because of GitHub.
 
